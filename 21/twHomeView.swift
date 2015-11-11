@@ -25,7 +25,7 @@ import UIKit
         addSubview(feed)
         insertSubview(search, belowSubview: statusBar)
         addSubview(cameraButton)
-
+        
         addConstraint(NSLayoutConstraint(item: cameraButton, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1.0, constant: 0.0))
         addConstraint(NSLayoutConstraint(item: cameraButton, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1.0, constant: -10.0))
         

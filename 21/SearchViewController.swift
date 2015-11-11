@@ -46,10 +46,17 @@ class SearchViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("HashtagCell") as! HashtagResultTableViewCell
+        if results![indexPath.row]["type"].string == "tag" {
+            let cell = tableView.dequeueReusableCellWithIdentifier("HashtagCell") as! HashtagResultTableViewCell
         
-        cell.hashtag.text = results![indexPath.row]["tag"].string
-        return cell
+            cell.hashtag.text = results![indexPath.row]["tag"].string
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCellWithIdentifier("UserCell") as! UserResultTableViewCell
+            
+            cell.username.text = results![indexPath.row]["username"].string
+            return cell
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

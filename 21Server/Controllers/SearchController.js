@@ -1,7 +1,8 @@
 
 var Controller = require(BASE_CONTROLLER),
 	path = require('path'),
-	util = require('util');
+	util = require('util'),
+	Q = require('q');
 
 function SearchController() {
 	Controller.call(this, ['Hashtag', 'User']);
@@ -14,15 +15,27 @@ SearchController.prototype.search = function(req, res, next) {
 		return next();
 	}
 
-	this.Hashtag
+	Q.all([
+		this.Hashtag
+		.query()
+		.whereRaw('MATCH(tag) AGAINST (? IN BOOLEAN MODE)', req.query.q + '*'),
 
-	.query()
-	.whereRaw('MATCH(tag) AGAINST (? IN BOOLEAN MODE)', req.query.q + '*')
-	.then(function (rows) {
-		console.log(rows);
-		res.send(rows);
+		this.User
+		.query()
+		.whereRaw('MATCH(username) AGAINST (? IN BOOLEAN MODE)', req.query.q + '*')
+	])
+	.spread(function (hashtags, users) {
+		hashtags.forEach(function (value) {
+			value['type'] = 'tag';
+		});
+		users.forEach(function (value) {
+			value['type'] = 'user';
+		});
+
+		res.send(hashtags.concat(users));
 		next();
-	});
+	})
+	.fail(next);
 };
 
 module.exports = new SearchController();
